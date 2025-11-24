@@ -44,6 +44,14 @@ function getPlatformArch() {
       shellcheck: 'darwin.aarch64',
     };
   }
+  // Developer convenience: allow running the lint wrapper on Windows x64 by
+  // mapping to linux/x64. This does not change CI behavior; it's only for local dev.
+  if (platform === 'win32' && arch === 'x64') {
+    return {
+      actionlint: 'linux_amd64',
+      shellcheck: 'linux.x86_64',
+    };
+  }
   throw new Error(`Unsupported platform/architecture: ${platform}/${arch}`);
 }
 
