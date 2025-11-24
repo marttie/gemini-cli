@@ -26,7 +26,8 @@ const TEMP_DIR = join(tmpdir(), 'gemini-cli-linters');
 function getPlatformArch() {
   const platform = process.platform;
   const arch = process.arch;
-  if (platform === 'linux' && arch === 'x64') {
+  // Treat win32/x64 as linux/x64 for linting tasks (cross-platform compatible)
+  if ((platform === 'linux' || platform === 'win32') && arch === 'x64') {
     return {
       actionlint: 'linux_amd64',
       shellcheck: 'linux.x86_64',
