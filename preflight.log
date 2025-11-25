@@ -1,0 +1,41 @@
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 preflight
+> npm run clean && npm ci && npm run format && npm run lint:ci && npm run build && npm run typecheck && npm run test:ci
+
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 clean
+> node scripts/clean.js
+
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 prepare
+> husky && npm run bundle
+
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 bundle
+> npm run generate && node esbuild.config.js && node scripts/copy_bundle_assets.js
+
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 generate
+> node scripts/generate-git-commit-info.js
+
+Assets copied to bundle/
+
+added 1303 packages, and audited 1309 packages in 6m
+
+346 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> @google/gemini-cli@0.19.0-nightly.20251124.e177314a4 format
+> prettier --experimental-cli --write .
+
+[error] scripts/lint.js: SyntaxError: Unexpected token (62:1)
+[error]   60 |   }
+[error]   61 |   throw new Error(`Unsupported platform/architecture: ${platform}/${arch}`);
+[error] > 62 | }
+[error]      | ^
+[error]   63 |
+[error]   64 | const platformArch = getPlatformArch();
+[error]   65 |
