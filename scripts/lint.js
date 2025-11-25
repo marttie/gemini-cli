@@ -23,6 +23,8 @@ const YAMLLINT_VERSION = '1.35.1';
 
 const TEMP_DIR = join(tmpdir(), 'gemini-cli-linters');
 
+const isWindows = process.platform === 'win32';
+
 function getPlatformArch() {
   const platform = process.platform;
   const arch = process.arch;
@@ -44,6 +46,13 @@ function getPlatformArch() {
       shellcheck: 'darwin.aarch64',
     };
   }
+  if (platform === 'win32') {
+    // Windows: actionlint and shellcheck are not supported
+    return {
+      actionlint: null,
+      shellcheck: null,
+    };
+  }
   throw new Error(`Unsupported platform/architecture: ${platform}/${arch}`);
 }
 
@@ -51,10 +60,9 @@ const platformArch = getPlatformArch();
 
 const PYTHON_VENV_PATH = join(TEMP_DIR, 'python_venv');
 
-const yamllintCheck =
-  process.platform === 'win32'
-    ? `if exist "${PYTHON_VENV_PATH}\\Scripts\\yamllint.exe" (exit 0) else (exit 1)`
-    : `test -x "${PYTHON_VENV_PATH}/bin/yamllint"`;
+const yamllintCheck = isWindows
+  ? `if exist "${PYTHON_VENV_PATH}\\Scripts\\yamllint.exe" (exit 0) else (exit 1)`
+  : `test -x "${PYTHON_VENV_PATH}/bin/yamllint"`;
 
 /**
  * @typedef {{
@@ -67,58 +75,87 @@ const yamllintCheck =
 /**
  * @type {{[linterName: string]: Linter}}
  */
-const LINTERS = {
-  actionlint: {
-    check: 'command -v actionlint',
-    installer: `
-      mkdir -p "${TEMP_DIR}/actionlint"
-      curl -sSLo "${TEMP_DIR}/.actionlint.tgz" "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_${platformArch.actionlint}.tar.gz"
-      tar -xzf "${TEMP_DIR}/.actionlint.tgz" -C "${TEMP_DIR}/actionlint"
-    `,
-    run: `
-      actionlint \
-        -color \
-        -ignore 'SC2002:' \
-        -ignore 'SC2016:' \
-        -ignore 'SC2129:' \
-        -ignore 'label ".+" is unknown'
-    `,
-  },
-  shellcheck: {
-    check: 'command -v shellcheck',
-    installer: `
-      mkdir -p "${TEMP_DIR}/shellcheck"
-      curl -sSLo "${TEMP_DIR}/.shellcheck.txz" "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${platformArch.shellcheck}.tar.xz"
-      tar -xf "${TEMP_DIR}/.shellcheck.txz" -C "${TEMP_DIR}/shellcheck" --strip-components=1
-    `,
-    run: `
-      git ls-files | grep -E '^([^.]+|.*\\.(sh|zsh|bash))' | xargs file --mime-type \
-        | grep "text/x-shellscript" | awk '{ print substr($1, 1, length($1)-1) }' \
-        | xargs shellcheck \
-          --check-sourced \
-          --enable=all \
-          --exclude=SC2002,SC2129,SC2310 \
-          --severity=style \
-          --format=gcc \
-          --color=never | sed -e 's/note:/warning:/g' -e 's/style:/warning:/g'
-    `,
-  },
-  yamllint: {
-    check: yamllintCheck,
-    installer: `
-    python3 -m venv "${PYTHON_VENV_PATH}" && \
-    "${PYTHON_VENV_PATH}/bin/pip" install "yamllint==${YAMLLINT_VERSION}"
-  `,
-    run: "git ls-files | grep -E '\\.(yaml|yml)' | xargs yamllint --format github",
-  },
-};
+const LINTERS = isWindows
+  ? {
+      // On Windows, actionlint and shellcheck are not supported
+      actionlint: {
+        check: 'echo actionlint not supported on Windows',
+        installer: 'echo Skipping actionlint installation on Windows',
+        run: 'echo Skipping actionlint on Windows',
+      },
+      shellcheck: {
+        check: 'echo shellcheck not supported on Windows',
+        installer: 'echo Skipping shellcheck installation on Windows',
+        run: 'echo Skipping shellcheck on Windows',
+      },
+      yamllint: {
+        check: 'echo yamllint not supported on Windows',
+        installer: 'echo Skipping yamllint installation on Windows',
+        run: 'echo Skipping yamllint on Windows',
+      },
+    }
+  : {
+      actionlint: {
+        check: 'command -v actionlint',
+        installer: [
+          `mkdir -p "${TEMP_DIR}/actionlint"`,
+          `curl -sSLo "${TEMP_DIR}/.actionlint.tgz" "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_${platformArch.actionlint}.tar.gz"`,
+          `tar -xzf "${TEMP_DIR}/.actionlint.tgz" -C "${TEMP_DIR}/actionlint"`,
+        ].join(' && '),
+        run: [
+          'actionlint',
+          '-color',
+          "-ignore 'SC2002:'",
+          "-ignore 'SC2016:'",
+          "-ignore 'SC2129:'",
+          '-ignore \'label ".+" is unknown\'',
+        ].join(' '),
+      },
+      shellcheck: {
+        check: 'command -v shellcheck',
+        installer: [
+          `mkdir -p "${TEMP_DIR}/shellcheck"`,
+          `curl -sSLo "${TEMP_DIR}/.shellcheck.txz" "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${platformArch.shellcheck}.tar.xz"`,
+          `tar -xf "${TEMP_DIR}/.shellcheck.txz" -C "${TEMP_DIR}/shellcheck" --strip-components=1`,
+        ].join(' && '),
+        run: [
+          "git ls-files | grep -E '^([^.]+|.*\\.(sh|zsh|bash))' | xargs file --mime-type",
+          '| grep "text/x-shellscript" | awk \'{ print substr($1, 1, length($1)-1) }\'',
+          '| xargs shellcheck',
+          '--check-sourced',
+          '--enable=all',
+          '--exclude=SC2002,SC2129,SC2310',
+          '--severity=style',
+          '--format=gcc',
+          "--color=never | sed -e 's/note:/warning:/g' -e 's/style:/warning:/g'",
+        ].join(' '),
+      },
+      yamllint: {
+        check: yamllintCheck,
+        installer: [
+          `python3 -m venv "${PYTHON_VENV_PATH}"`,
+          `"${PYTHON_VENV_PATH}/bin/pip" install "yamllint==${YAMLLINT_VERSION}"`,
+        ].join(' && '),
+        run: "git ls-files | grep -E '\\.(yaml|yml)' | xargs yamllint --format github",
+      },
+    };
 
 function runCommand(command, stdio = 'inherit') {
   try {
     const env = { ...process.env };
     const nodeBin = join(process.cwd(), 'node_modules', '.bin');
-    env.PATH = `${nodeBin}:${TEMP_DIR}/actionlint:${TEMP_DIR}/shellcheck:${PYTHON_VENV_PATH}/bin:${env.PATH}`;
-    execSync(command, { stdio, env });
+    const pathSep = isWindows ? ';' : ':';
+    const pythonBin = isWindows
+      ? `${PYTHON_VENV_PATH}\\Scripts`
+      : `${PYTHON_VENV_PATH}/bin`;
+    env.PATH = [
+      nodeBin,
+      `${TEMP_DIR}/actionlint`,
+      `${TEMP_DIR}/shellcheck`,
+      pythonBin,
+      env.PATH,
+    ].join(pathSep);
+    execSync(command, { stdio, env, shell: true });
     return true;
   } catch (_e) {
     return false;
