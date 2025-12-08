@@ -1,0 +1,53 @@
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac preflight
+> npm run clean && npm ci && npm run format && npm run lint:ci && npm run build && npm run typecheck && npm run test:ci
+
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac clean
+> node scripts/clean.js
+
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac prepare
+> husky && npm run bundle
+
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac bundle
+> npm run generate && node esbuild.config.js && node scripts/copy_bundle_assets.js
+
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac generate
+> node scripts/generate-git-commit-info.js
+
+Copied 4 policy files to bundle/policies/
+Assets copied to bundle/
+
+added 1308 packages, and audited 1314 packages in 7m
+
+350 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac format
+> prettier --experimental-cli --write .
+
+.github/agents/kimur.md
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac lint:ci
+> npm run lint:all
+
+
+> @google/gemini-cli@0.21.0-nightly.20251207.025e450ac lint:all
+> node scripts/lint.js
+
+Warning: Unsupported platform/architecture: win32/x64. actionlint and shellcheck will be skipped on this platform.
+Setting up linters...
+Skipping actionlint installation on this platform.
+Skipping shellcheck installation on this platform.
+Installing yamllint...
+All required linters are available.
+
+Running ESLint...
+'node' is not recognized as an internal or external command,
+operable program or batch file.

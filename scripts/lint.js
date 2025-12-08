@@ -142,8 +142,9 @@ function runCommand(command, stdio = 'inherit') {
   try {
     const env = { ...process.env };
     const nodeBin = join(process.cwd(), 'node_modules', '.bin');
-    env.PATH = `${nodeBin}:${TEMP_DIR}/actionlint:${TEMP_DIR}/shellcheck:${PYTHON_VENV_PATH}/bin:${env.PATH}`;
-    execSync(command, { stdio, env });
+    const pathSep = process.platform === 'win32' ? ';' : ':';
+    env.PATH = `${nodeBin}${pathSep}${TEMP_DIR}/actionlint${pathSep}${TEMP_DIR}/shellcheck${pathSep}${PYTHON_VENV_PATH}/bin${pathSep}${env.PATH}`;
+    execSync(command, { stdio, env, shell: true });
     return true;
   } catch (_e) {
     return false;
@@ -179,8 +180,8 @@ export function setupLinters() {
 export function runESLint() {
   console.log('\nRunning ESLint...');
   // Run eslint directly using node for cross-platform compatibility
-  const eslintCmd =
-    'node ./node_modules/eslint/bin/eslint.js . --ext .ts,.tsx && node ./node_modules/eslint/bin/eslint.js integration-tests && node ./node_modules/eslint/bin/eslint.js scripts';
+  const nodeExec = process.execPath;
+  const eslintCmd = `"${nodeExec}" ./node_modules/eslint/bin/eslint.js . --ext .ts,.tsx && "${nodeExec}" ./node_modules/eslint/bin/eslint.js integration-tests && "${nodeExec}" ./node_modules/eslint/bin/eslint.js scripts`;
   if (!runCommand(eslintCmd)) {
     process.exit(1);
   }
@@ -210,6 +211,14 @@ export function runShellcheck() {
 
 export function runYamllint() {
   console.log('\nRunning yamllint...');
+
+  if (process.platform === 'win32') {
+    // On Windows, skip yamllint for now due to complex piping requirements
+    // TODO: Implement Windows-compatible YAML linting
+    console.log('Skipping yamllint on Windows (not yet supported)');
+    return;
+  }
+
   if (!runCommand(LINTERS.yamllint.run)) {
     process.exit(1);
   }
@@ -217,7 +226,9 @@ export function runYamllint() {
 
 export function runPrettier() {
   console.log('\nRunning Prettier...');
-  if (!runCommand('prettier --check .')) {
+  const nodeExec = process.execPath;
+  const prettierCmd = `"${nodeExec}" ./node_modules/prettier/bin/prettier.cjs --check .`;
+  if (!runCommand(prettierCmd)) {
     process.exit(1);
   }
 }
