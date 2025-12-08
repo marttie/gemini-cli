@@ -1830,10 +1830,10 @@ source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')]tokenizer:
-> > typing.Union[ForwardRef('PreTrainedTokenizerBase'), > > > > > > > > > >
-> > ForwardRef('FeatureExtractionMixin')] = Nonefeature_extractor:
-> > typing.Union[ForwardRef('PreTrainedTokenizerBase'), > > > > > > > > > >
-> > ForwardRef('FeatureExtractionMixin')] = Nonedevice: int = None )
+> > typing.Union[ForwardRef('PreTrainedTokenizerBase'), > > > > > > > > > > > >
+> > > > ForwardRef('FeatureExtractionMixin')] = Nonefeature_extractor:
+> > typing.Union[ForwardRef('PreTrainedTokenizerBase'), > > > > > > > > > > > >
+> > > > ForwardRef('FeatureExtractionMixin')] = Nonedevice: int = None )
 
 Parameters
 
@@ -1868,9 +1868,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -1947,9 +1948,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2029,9 +2031,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2109,10 +2112,11 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: str = Nonemetric: typing.Union[str, > > > > > > > > > >
-> > evaluate.module.EvaluationModule] = Nonetokenizer:
-> > typing.Union[str, > > > > >
+> > > > > Nonesplit: str = Nonemetric: typing.Union[str, > > > > > > > > > > > >
+> > > > > > > > > > evaluate.module.EvaluationModule] = Nonetokenizer:
+> > > > > typing.Union[str, > > > > >
 >
 > > ForwardRef('PreTrainedTokenizer'), NoneType] = Nonestrategy:
 > > typing.Literal['simple', 'bootstrap'] = 'simple'confidence_level: float =
@@ -2201,9 +2205,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2232,9 +2237,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2308,9 +2314,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2384,9 +2391,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2462,9 +2470,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >
@@ -2536,9 +2545,10 @@ compute < source
 >
 > > typing.Callable, ForwardRef('PreTrainedModel'), > > > > > > > > >
 > > ForwardRef('TFPreTrainedModel')] = Nonedata: typing.Union[str, > > > > > > >
+> >
 > > > > > datasets.arrow_dataset.Dataset] = Nonesubset: typing.Optional[str] =
-> > Nonesplit: typing.Optional[str] = Nonemetric:
-> > typing.Union[str, > > > > > > >
+> > > > > Nonesplit: typing.Optional[str] = Nonemetric:
+> > > > > typing.Union[str, > > > > > > >
 >
 > > evaluate.module.EvaluationModule] = Nonetokenizer:
 > > typing.Union[str, > > > > >

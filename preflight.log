@@ -49,5 +49,15 @@ Installing yamllint...
 All required linters are available.
 
 Running ESLint...
-'node' is not recognized as an internal or external command,
-operable program or batch file.
+
+Skipping actionlint on this platform.
+
+Skipping shellcheck on this platform.
+
+Running yamllint...
+Skipping yamllint on Windows (not yet supported)
+
+Running Prettier...
+Checking formatting...
+[warn] .github/agents/kimur.md
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
