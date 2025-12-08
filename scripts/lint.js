@@ -49,7 +49,7 @@ function getPlatformArch() {
 }
 
 const platformArch = getPlatformArch();
-const isPlatformSupported = platformArch !== null;
+const hasNativeLinterSupport = platformArch !== null;
 
 const PYTHON_VENV_PATH = join(TEMP_DIR, 'python_venv');
 
@@ -72,7 +72,7 @@ const yamllintCheck =
 const LINTERS = {};
 
 // Only add actionlint and shellcheck for supported platforms
-if (isPlatformSupported) {
+if (hasNativeLinterSupport) {
   LINTERS.actionlint = {
     check: 'command -v actionlint',
     installer: `
@@ -136,7 +136,7 @@ export function setupLinters() {
   console.log('Setting up linters...');
 
   // Warn if platform is not supported for native linters
-  if (!isPlatformSupported) {
+  if (!hasNativeLinterSupport) {
     console.warn(
       `\nWarning: Platform ${process.platform}/${process.arch} is not supported for actionlint and shellcheck.`,
     );
@@ -171,7 +171,7 @@ export function runESLint() {
 }
 
 export function runActionlint() {
-  if (!isPlatformSupported) {
+  if (!hasNativeLinterSupport) {
     console.log('\nSkipping actionlint (unsupported platform)...');
     return;
   }
@@ -182,7 +182,7 @@ export function runActionlint() {
 }
 
 export function runShellcheck() {
-  if (!isPlatformSupported) {
+  if (!hasNativeLinterSupport) {
     console.log('\nSkipping shellcheck (unsupported platform)...');
     return;
   }
