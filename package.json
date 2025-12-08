@@ -134,14 +134,14 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix --max-warnings 0 --no-warn-ignored"
+      "node ./node_modules/prettier/bin/prettier.cjs --write",
+      "node ./node_modules/eslint/bin/eslint.js --fix --max-warnings 0 --no-warn-ignored"
     ],
     "eslint.config.js": [
-      "prettier --write"
+      "node ./node_modules/prettier/bin/prettier.cjs --write"
     ],
     "*.{json,md}": [
-      "prettier --write"
+      "node ./node_modules/prettier/bin/prettier.cjs --write"
     ]
   }
 }

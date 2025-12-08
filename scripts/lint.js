@@ -17,6 +17,12 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+// Cross-platform npm command helper for Windows compatibility
+function npmCmd(args) {
+  const bin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  return `${bin} ${args}`;
+}
+
 const ACTIONLINT_VERSION = '1.7.7';
 const SHELLCHECK_VERSION = '0.11.0';
 const YAMLLINT_VERSION = '1.35.1';
@@ -178,7 +184,7 @@ export function setupLinters() {
 
 export function runESLint() {
   console.log('\nRunning ESLint...');
-  if (!runCommand('npm run lint')) {
+  if (!runCommand(npmCmd('run lint'))) {
     process.exit(1);
   }
 }
