@@ -44,10 +44,12 @@ function getPlatformArch() {
       shellcheck: 'darwin.aarch64',
     };
   }
-  throw new Error(`Unsupported platform/architecture: ${platform}/${arch}`);
+  // Return null for unsupported platforms instead of throwing
+  return null;
 }
 
 const platformArch = getPlatformArch();
+const hasNativeLinterSupport = platformArch !== null;
 
 const PYTHON_VENV_PATH = join(TEMP_DIR, 'python_venv');
 
@@ -67,8 +69,11 @@ const yamllintCheck =
 /**
  * @type {{[linterName: string]: Linter}}
  */
-const LINTERS = {
-  actionlint: {
+const LINTERS = {};
+
+// Only add actionlint and shellcheck for supported platforms
+if (hasNativeLinterSupport) {
+  LINTERS.actionlint = {
     check: 'command -v actionlint',
     installer: `
       mkdir -p "${TEMP_DIR}/actionlint"
@@ -83,8 +88,8 @@ const LINTERS = {
         -ignore 'SC2129:' \
         -ignore 'label ".+" is unknown'
     `,
-  },
-  shellcheck: {
+  };
+  LINTERS.shellcheck = {
     check: 'command -v shellcheck',
     installer: `
       mkdir -p "${TEMP_DIR}/shellcheck"
@@ -102,15 +107,17 @@ const LINTERS = {
           --format=gcc \
           --color=never | sed -e 's/note:/warning:/g' -e 's/style:/warning:/g'
     `,
-  },
-  yamllint: {
-    check: yamllintCheck,
-    installer: `
+  };
+}
+
+// yamllint is available on all platforms (using Python)
+LINTERS.yamllint = {
+  check: yamllintCheck,
+  installer: `
     python3 -m venv "${PYTHON_VENV_PATH}" && \
     "${PYTHON_VENV_PATH}/bin/pip" install "yamllint==${YAMLLINT_VERSION}"
   `,
-    run: "git ls-files | grep -E '\\.(yaml|yml)' | xargs yamllint --format github",
-  },
+  run: "git ls-files | grep -E '\\.(yaml|yml)' | xargs yamllint --format github",
 };
 
 function runCommand(command, stdio = 'inherit') {
@@ -127,6 +134,17 @@ function runCommand(command, stdio = 'inherit') {
 
 export function setupLinters() {
   console.log('Setting up linters...');
+
+  // Warn if platform is not supported for native linters
+  if (!hasNativeLinterSupport) {
+    console.warn(
+      `\nWarning: Platform ${process.platform}/${process.arch} is not supported for actionlint and shellcheck.`,
+    );
+    console.warn(
+      'These linters will be skipped. ESLint, Prettier, yamllint, tsconfig checks, and sensitive keyword linter will still run.\n',
+    );
+  }
+
   rmSync(TEMP_DIR, { recursive: true, force: true });
   mkdirSync(TEMP_DIR, { recursive: true });
 
@@ -153,6 +171,10 @@ export function runESLint() {
 }
 
 export function runActionlint() {
+  if (!hasNativeLinterSupport) {
+    console.log('\nSkipping actionlint (unsupported platform)...');
+    return;
+  }
   console.log('\nRunning actionlint...');
   if (!runCommand(LINTERS.actionlint.run)) {
     process.exit(1);
@@ -160,6 +182,10 @@ export function runActionlint() {
 }
 
 export function runShellcheck() {
+  if (!hasNativeLinterSupport) {
+    console.log('\nSkipping shellcheck (unsupported platform)...');
+    return;
+  }
   console.log('\nRunning shellcheck...');
   if (!runCommand(LINTERS.shellcheck.run)) {
     process.exit(1);
