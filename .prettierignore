@@ -20,3 +20,4 @@ gha-creds-*.json
 junit.xml
 Thumbs.db
 .pytest_cache
+.github/agents/kimur.md
