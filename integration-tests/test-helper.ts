@@ -519,7 +519,56 @@ export class TestRig {
 
           resolve(result);
         } else {
-          reject(new Error(`Process exited with code ${code}:\n${stderr}`));
+          // Normalize stdout/stderr to Buffers (some helpers collect strings)
+          const stdoutBuf: Buffer = Buffer.isBuffer(stdout)
+            ? stdout
+            : Buffer.from(String(stdout ?? ''), 'utf8');
+          const stderrBuf: Buffer = Buffer.isBuffer(stderr)
+            ? stderr
+            : Buffer.from(String(stderr ?? ''), 'utf8');
+
+          // Simple heuristic to detect whether a buffer is mostly printable text.
+          const isMostlyText = (buf: Buffer) => {
+            if (!buf || buf.length === 0) return true;
+            let printable = 0;
+            for (let i = 0; i < buf.length; i++) {
+              const b = buf[i];
+              // allow common whitespace and printable ASCII range
+              if (
+                b === 0x09 ||
+                b === 0x0a ||
+                b === 0x0d ||
+                (b >= 0x20 && b <= 0x7e)
+              )
+                printable++;
+            }
+            return printable / buf.length > 0.9;
+          };
+
+          const makePreview = (buf: Buffer) => {
+            if (isMostlyText(buf)) return buf.toString('utf8');
+            const base64 = buf.toString('base64');
+            const preview =
+              base64.length > 1024
+                ? base64.slice(0, 1024) + '... (truncated)'
+                : base64;
+            return `<binary ${buf.length} bytes; base64 preview (truncated):\n${preview}>`;
+          };
+
+          const cmdContext = [
+            `Command: ${command} ${commandArgs.map((a) => JSON.stringify(a)).join(' ')}`,
+            `CWD: ${this.testDir! || process.cwd()}`,
+            `Env (subset): ${JSON.stringify({ PATH: env['PATH'], NODE_ENV: env['NODE_ENV'] })}`,
+          ].join('\n');
+
+          const stdoutPreview = makePreview(stdoutBuf);
+          const stderrPreview = makePreview(stderrBuf);
+
+          reject(
+            new Error(
+              `Process exited with code ${code}.\n${cmdContext}\n\n=== STDOUT (${stdoutBuf.length} bytes) ===\n${stdoutPreview}\n\n=== STDERR (${stderrBuf.length} bytes) ===\n${stderrPreview}`,
+            ),
+          );
         }
       });
     });
@@ -571,7 +620,56 @@ export class TestRig {
           }
           resolve(result);
         } else {
-          reject(new Error(`Process exited with code ${code}:\n${stderr}`));
+          // Normalize stdout/stderr to Buffers (some helpers collect strings)
+          const stdoutBuf: Buffer = Buffer.isBuffer(stdout)
+            ? stdout
+            : Buffer.from(String(stdout ?? ''), 'utf8');
+          const stderrBuf: Buffer = Buffer.isBuffer(stderr)
+            ? stderr
+            : Buffer.from(String(stderr ?? ''), 'utf8');
+
+          // Simple heuristic to detect whether a buffer is mostly printable text.
+          const isMostlyText = (buf: Buffer) => {
+            if (!buf || buf.length === 0) return true;
+            let printable = 0;
+            for (let i = 0; i < buf.length; i++) {
+              const b = buf[i];
+              // allow common whitespace and printable ASCII range
+              if (
+                b === 0x09 ||
+                b === 0x0a ||
+                b === 0x0d ||
+                (b >= 0x20 && b <= 0x7e)
+              )
+                printable++;
+            }
+            return printable / buf.length > 0.9;
+          };
+
+          const makePreview = (buf: Buffer) => {
+            if (isMostlyText(buf)) return buf.toString('utf8');
+            const base64 = buf.toString('base64');
+            const preview =
+              base64.length > 1024
+                ? base64.slice(0, 1024) + '... (truncated)'
+                : base64;
+            return `<binary ${buf.length} bytes; base64 preview (truncated):\n${preview}>`;
+          };
+
+          const cmdContext = [
+            `Command: ${command} ${commandArgs.map((a) => JSON.stringify(a)).join(' ')}`,
+            `CWD: ${this.testDir! || process.cwd()}`,
+            `Env (subset): ${JSON.stringify({ PATH: env['PATH'], NODE_ENV: env['NODE_ENV'] })}`,
+          ].join('\n');
+
+          const stdoutPreview = makePreview(stdoutBuf);
+          const stderrPreview = makePreview(stderrBuf);
+
+          reject(
+            new Error(
+              `Process exited with code ${code}.\n${cmdContext}\n\n=== STDOUT (${stdoutBuf.length} bytes) ===\n${stdoutPreview}\n\n=== STDERR (${stderrBuf.length} bytes) ===\n${stderrPreview}`,
+            ),
+          );
         }
       });
     });
