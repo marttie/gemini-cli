@@ -26,8 +26,10 @@ if (!process.cwd().includes('packages')) {
   process.exit(1);
 }
 
-// build typescript files
-execSync('tsc --build', { stdio: 'inherit' });
+// build typescript files using Node directly for cross-platform compatibility
+execSync('node ../../node_modules/typescript/bin/tsc --build', {
+  stdio: 'inherit',
+});
 
 // copy .{md,json} files
 execSync('node ../../scripts/copy_files.js', { stdio: 'inherit' });
